@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="cordova-plugin-app-check" version="0.0.1"
+    xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>AppCheckPlugin</name>
+
+    <dependency id="cordova-plugin-androidx" version="^1.0.2" />
+    <dependency id="cordova-plugin-androidx-adapter" version="^1.1.0" />
+    <dependency id="cordova-plugin-background-fetch" version="^6.1.1" />
+
+    <js-module name="AppCheckPlugin" src="www/AppCheckPlugin.js">
+        <clobbers target="cordova.plugins.AppCheckPlugin" />
+    </js-module>
+    <platform name="android">
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="AppCheckPlugin">
+                <param name="android-package" value="cordova.plugin.appcheck.AppCheckPlugin" />
+            </feature>
+        </config-file>
+
+        <config-file parent="/manifest" target="app/src/main/AndroidManifest.xml">
+            <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+        </config-file>
+
+        <config-file parent="/*" target="AndroidManifest.xml"></config-file>
+        <source-file src="src/android/AppCheckPlugin.java" target-dir="src/cordova/plugin/appcheck" />
+        <source-file src="src/android/AppCheck.java" target-dir="src/cordova/plugin/appcheck" />
+        <source-file src="src/android/AppDao.java" target-dir="src/cordova/plugin/appcheck" />
+        <source-file src="src/android/AppData.java" target-dir="src/cordova/plugin/appcheck" />
+        <source-file src="src/android/AppDatabase.java" target-dir="src/cordova/plugin/appcheck" />
+        <source-file src="src/android/AppsCodesDatabaseHelper.java" target-dir="src/cordova/plugin/appcheck" />
+        <source-file src="src/android/AppsDetailsDatabaseHelper.java" target-dir="src/cordova/plugin/appcheck" />
+        <source-file src="src/android/RequestHandler.java" target-dir="src/cordova/plugin/appcheck" />
+
+        <source-file src="src/android/copypaste" target-dir="src/cordova/plugin/appcheck" />
+        <source-file src="src/android/copypaste2.txt" target-dir="src/cordova/plugin/appcheck" />
+
+        <source-file src="src/android/BackgroundFetchHeadlessTask.java" target-dir="app/src/main/java/com/transistorsoft/cordova/backgroundfetch" />
+
+
+        <framework custom="true" src="src/android/AppCheck-gradle.xml" type="gradleReference" />
+
+
+    </platform>
+</plugin>
