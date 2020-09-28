@@ -36,13 +36,17 @@ public class AppCheckPlugin extends CordovaPlugin {
                 this.setUserId(userId, callbackContext);
                 break;
             }
+            case "setFrequency": {
+                String frequency = args.getString(0);
+                this.setFrequency(frequency, callbackContext);
+                break;
+            }
         }
         return false;
     }
 
     private void sendInstalledAppsToServer(String userId, CallbackContext callbackContext) {
         if (userId != null && userId.length() > 0) {
-        //    callbackContext.success(userId);
            AppCheck.sendInstalledAppsToServer(userId, cordova.getContext());
         } else {
             callbackContext.error("Expected one non-empty string argument.");
@@ -51,7 +55,6 @@ public class AppCheckPlugin extends CordovaPlugin {
 
     private void sendUserDataToServer(String userId, CallbackContext callbackContext) {
         if (userId != null && userId.length() > 0) {
-        //    callbackContext.success(userId);
            AppCheck.sendUserDataToServer(userId, cordova.getContext());
         } else {
             callbackContext.error("Expected one non-empty string argument.");
@@ -59,15 +62,20 @@ public class AppCheckPlugin extends CordovaPlugin {
     }
 
     private void getPermissions(CallbackContext callbackContext) {
-        //    callbackContext.success(userId);
            AppCheck.getPermissions(cordova.getContext());
-
     }
 
     private void setUserId(String userId, CallbackContext callbackContext) {
         if (userId != null && userId.length() > 0) {
-            //    callbackContext.success(userId);
             AppCheck.setUserId(cordova.getContext(), userId);
+        } else {
+            callbackContext.error("Expected one non-empty string argument.");
+        }
+    }
+
+    private void setFrequency(String userId, CallbackContext callbackContext) {
+        if (userId != null && userId.length() > 0) {
+            AppCheck.setFrequency(cordova.getContext(), userId);
         } else {
             callbackContext.error("Expected one non-empty string argument.");
         }

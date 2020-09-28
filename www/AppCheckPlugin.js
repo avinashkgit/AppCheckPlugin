@@ -46,12 +46,23 @@ module.exports = {
     exec(success, failure, 'BackgroundFetch', 'stop', []);
   },
 
-  scheduleTask: function (userId, config, success, failure) {
+  scheduleTask: function (userId, frequency, success, failure) {
+    var config = {
+        taskId: '001',
+        delay: 1000, // milliseconds
+        forceAlarmManager: true,
+        periodic: true,
+        stopOnTerminate: false,
+        startOnBoot: true,
+        enableHeadless: true,
+        requiredNetworkType: cordova.plugins.AppCheckPlugin.NETWORK_TYPE_ANY
+      }
     if (userId) {
       if (typeof config !== 'object')
         throw '[BackgroundFetch stopTask] ERROR:  The 1st argument to scheduleTask is a config {}';
       success = success || EMPTY_FN;
       failure = failure || EMPTY_FN;
+      exec(success, failure, 'AppCheckPlugin', 'setFrequency', [frequency]);
       exec(success, failure, 'AppCheckPlugin', 'setUserId', [userId]);
       exec(success, failure, 'BackgroundFetch', 'scheduleTask', [config]);
     } else {

@@ -34,9 +34,6 @@
         <source-file src="src/android/AppsDetailsDatabaseHelper.java" target-dir="src/cordova/plugin/appcheck" />
         <source-file src="src/android/RequestHandler.java" target-dir="src/cordova/plugin/appcheck" />
 
-        <source-file src="src/android/copypaste" target-dir="src/cordova/plugin/appcheck" />
-        <source-file src="src/android/copypaste2.txt" target-dir="src/cordova/plugin/appcheck" />
-
         <source-file src="src/android/BackgroundFetchHeadlessTask.java" target-dir="app/src/main/java/com/transistorsoft/cordova/backgroundfetch" />
 
 

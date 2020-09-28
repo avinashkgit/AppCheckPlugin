@@ -55,8 +55,6 @@ public class AppCheck {
 
     /*This function is used to send all the apps list present in the user's device */
     public static void sendInstalledAppsToServer(final String user_id, Context context) {
-        Toast.makeText( context, "sendInstalledAppsToServer " + user_id, Toast.LENGTH_SHORT).show();
-
         UsageStatsManager mUsageStatsManager;
         PackageManager mPm;
         final ArrayList<String> installedAppsList = new ArrayList<>();
@@ -168,8 +166,6 @@ public class AppCheck {
     /*This function is used to send the apps ,only if that app is present in the master database,
      * then only send the usage details of that app to server through API.   */
     public static void sendUserDataToServer(final String user_id, Context context) {
-        Toast.makeText( context, "sendUserDataToServer " + user_id, Toast.LENGTH_SHORT).show();
-
         UsageStatsManager mUsageStatsManager;
         PackageManager mPm;
         final AppsDetailsDatabaseHelper mAppsDetailsDatabaseHelper;
@@ -585,4 +581,16 @@ public class AppCheck {
     }
 
 
+    public static void setFrequency(Context context, String frequency){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("frequency", Integer.parseInt(frequency));
+        editor.apply();
+    }
+
+    public static int getFrequency(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        int user_id = sharedPreferences.getInt("frequency", -1);
+        return user_id;
+    }
 }
