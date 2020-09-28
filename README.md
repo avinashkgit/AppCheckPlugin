@@ -4,17 +4,20 @@
 
 `ionic cordova plugin add https://github.com/avinashkgit/AppCheckPlugin`
 
+### Add domain to your network_security_config.xml 
+resources/android/xml/network_security_config.xml 
+` <domain includeSubdomains="true">evolvu.in</domain>`
 
 ### SAMPLE CODE FOR USAGE
 
-### getting user access permission
+### Getting user access permission
 
 `getUserAccessPermission = () => {
       cordova.plugins.AppCheckPlugin.getUsageAccessPermissions();
 }`
 
 
-### using sendInstalledAppsToServer
+### Using Send Installed Apps To Server
 
 `sendInstalledAppsToServer = () => {
     cordova.plugins.AppCheckPlugin.sendInstalledAppsToServer(
@@ -24,7 +27,7 @@
     );
 }`
 
-### using sendUserDataToServer
+### Using Send User Data To Server
 `sendUserDataToServer = () => {
     cordova.plugins.AppCheckPlugin.sendUserDataToServer(
       'user_id',
@@ -33,7 +36,8 @@
     );
 }`
 
-### running background fetch
+### Running background fetch
+Note: Duration to be in minutes
 `runBackgroundFetch = () => {
     cordova.plugins.AppCheckPlugin.scheduleTask(
       'user_id',
