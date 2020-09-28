@@ -15,8 +15,7 @@ resources/android/xml/network_security_config.xml
 ### Getting user access permission
 
 
-`getUserAccessPermission = () => 
-{
+`getUserAccessPermission = () =>  {
       cordova.plugins.AppCheckPlugin.getUsageAccessPermissions();
 }`
 
@@ -24,7 +23,7 @@ resources/android/xml/network_security_config.xml
 ### Using Send Installed Apps To Server
 
 `
-sendInstalledAppsToServer = () => {
+sendInstalledAppsToServer = () =>  {
     cordova.plugins.AppCheckPlugin.sendInstalledAppsToServer(
       'user_id',
       () => {},
@@ -35,7 +34,7 @@ sendInstalledAppsToServer = () => {
 
 ### Using Send User Data To Server
 `
-sendUserDataToServer = () => {
+sendUserDataToServer = () =>  {
     cordova.plugins.AppCheckPlugin.sendUserDataToServer(
       'user_id',
       () => {},
@@ -48,7 +47,7 @@ sendUserDataToServer = () => {
 
 Note: Duration to be in minutes
 `
-runBackgroundFetch = () => {
+runBackgroundFetch = () =>  {
     cordova.plugins.AppCheckPlugin.scheduleTask(
       'user_id',
       2,
