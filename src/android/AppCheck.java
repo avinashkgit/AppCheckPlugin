@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+
 import static android.content.Context.MODE_PRIVATE;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -44,24 +45,27 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class AppCheck {
 
+    static String mAppCode="";
+
+
     private static final String TAG = "UsageStatsActivity";
     public static AppsDetailsDatabaseHelper mAppsDetailsDatabaseHelper;
     public static AppsCodesDatabaseHelper mAppsCodesDatabaseHelper;
     public static AppDatabase ad;
     private static final String SHARED_PREFS = "sharedPrefs";
     private static final String KEY = "user_id";
-
-
+    public static String value = "";
 
     /*This function is used to send all the apps list present in the user's device */
-    public static void sendInstalledAppsToServer(final String user_id, Context context) {
+    public static void sendInstalledAppsToServer(final String user_id, Context context)
+    {
         UsageStatsManager mUsageStatsManager;
         PackageManager mPm;
         final ArrayList<String> installedAppsList = new ArrayList<>();
+        final ArrayList<String> installedAppsList1 = new ArrayList<>();
 
         mPm = context.getPackageManager();
         mUsageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
-
 
         //permission code(23sept2020)
         /*List<UsageStats> statsNew = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, 0,
@@ -99,10 +103,12 @@ public class AppCheck {
                     String packageName = p.packageName;
 
                     String appName = p.applicationInfo.loadLabel(context.getPackageManager()).toString();
+                    Log.e("APPNAME", "NAMe-=" + appName);
+
 
                     //this is the old code for app name // TODO: 22-09-2020
-                    //String installedApp = "\"" + appName + "\"";
-
+                    String installedApp1 = "\"" + appName + "\"";
+                    installedAppsList1.add(installedApp1);
                     //This is the new code for adding the package name of the apps // TODO: 22-09-2020
                     String installedApp = "\"" + packageName + "\"";
                     installedAppsList.add(installedApp);
@@ -113,34 +119,34 @@ public class AppCheck {
 
                     if (existingStats == null) {
                         map.put(pkgStats.getPackageName(), pkgStats);
-                    }
-                    else {
+                    } else {
                         existingStats.add(pkgStats);
                     }
 
                 }
-            }
-            catch (PackageManager.NameNotFoundException e) {
+            } catch (PackageManager.NameNotFoundException e) {
                 // This package may be gone.
             }
         }
 
-        StringRequest stringRequestThree = new StringRequest(Request.Method.POST, "https://evolvu" + ".in" +
+        Log.e("installed_app_of_user", "Param>>" + "http://digiqualweb.hansaresearch.com" +
+                "/backend_app/index.php/AdminApi/add_installed_app_of_user");
+
+        StringRequest stringRequestThree = new StringRequest(Request.Method.POST, "http://digiqualweb.hansaresearch.com" +
                 "/backend_app/index.php/AdminApi/add_installed_app_of_user", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response != null && !response.equals("") && !response.equals("null")) {
                     try {
+                        Log.e("installed_app_of_user", "VALUE response>>" + response);
                         JSONObject jsonObject = new JSONObject(response);
                         String status = jsonObject.getString("status");
                         System.out.println(status);
-                    }
-                    catch (JSONException e) {
+                    } catch (JSONException e) {
                         e.printStackTrace();
                         Log.i("get_app_usage:", "error1=> " + e.getMessage());
                     }
-                }
-                else {
+                } else {
                     Log.i("get_app_usage:", "error2=> " + response);
                 }
             }
@@ -151,12 +157,33 @@ public class AppCheck {
                 Log.i("get_app_usage:", "error3=> " + error.getMessage());
             }
         }) {
+
+
             @Override
             protected Map<String, String> getParams() {
+                AppDao dao = ad.appDao();
+
+                List<AppData> dd = dao.getAllApps();
+                for (int i = 0; i < dd.size(); i++) {
+                    AppData model = dd.get(i);
+                    value = "[" + dd.get(i).name + "]";
+
+                }
                 Map<String, String> params = new HashMap<>();
                 params.put("user_id", user_id);
                 params.put("name", installedAppsList.size() == 0 ? "" : installedAppsList.toString());
+                params.put("common_name", value);
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                Date date = new Date();
+                System.out.println(formatter.format(date));
+                Log.e("installed_app_of_user", "DATE>>" + formatter.format(date));
+                Log.e("installed_app_of_user", "VALUE APPNAME>>" + value);
+                params.put("polling_date", "" + formatter.format(date).trim());//dd-mm-yyyy
+                Log.e("installed_app_of_user", "Param>>" + "http://digiqualweb.hansaresearch.com" +
+                        "/backend_app/index.php/AdminApi/add_installed_app_of_user");
+
                 System.out.println(params);
+                Log.e("installed_app_of_user", "Param>>" + params);
                 return params;
             }
         };
@@ -166,6 +193,7 @@ public class AppCheck {
     /*This function is used to send the apps ,only if that app is present in the master database,
      * then only send the usage details of that app to server through API.   */
     public static void sendUserDataToServer(final String user_id, Context context) {
+        Log.e("add_deatils_of_app", "Inmare0");
         UsageStatsManager mUsageStatsManager;
         PackageManager mPm;
         final AppsDetailsDatabaseHelper mAppsDetailsDatabaseHelper;
@@ -277,24 +305,23 @@ public class AppCheck {
 
                     if (existingStats == null) {
                         map.put(pkgStats.getPackageName(), pkgStats);
-                    }
-                    else {
+                    } else {
                         existingStats.add(pkgStats);
                     }
-
                 }
-            }
-            catch (PackageManager.NameNotFoundException e) {
+            } catch (PackageManager.NameNotFoundException e) {
                 // This package may be gone.
             }
         }
-
+        Log.e("add_deatils_of_app", "Inmare1");
         final ArrayList<UsageStats> mPackageStats = new ArrayList<>(map.values());
         for (int index = 0; index < mPackageStats.size(); index++) {
+            Log.e("add_deatils_of_app", "Inmare2");
             UsageStats pkgStats = mPackageStats.get(index);
             if (pkgStats != null) {
                 final String label = mAppLabelMap.get(pkgStats.getPackageName());
-
+                Log.e("add_deatils_of_app", "Inmare3");
+                Log.e("Values", "Dtat" + label);
                 //pckg name
                 String packageName = pkgStats.getPackageName();
 
@@ -302,79 +329,92 @@ public class AppCheck {
                         + "HH:mm:ss");
                 final String lastTimeUsed = formatter.format(new Date(pkgStats.getLastTimeUsed()));
                 final String usageTime = String.valueOf(pkgStats.getTotalTimeInForeground() / 60000);
+                //final String usageTime = String.valueOf(pkgStats.getTotalTimeForegroundServiceUsed() / 60000);
 
                 //passing data to api...
                 if (checkConnection(context)) {
-
+                    Log.e("add_deatils_of_app", "Inmare4");
                     int data_count = mAppsDetailsDatabaseHelper.getRowCount();
                     mAppsDetailsDatabaseHelper.close();
-
+                    Log.e("add_deatils_of_app", "data_count?" + data_count);
                     //checking if offline db is having data or not
+
                     if (data_count > 0) {
-                        for (int i = 0; i < data_count; i++) {
-                            String dbLabel = mAppsDetailsDatabaseHelper.getAppName(i + 1);
-                            //get appCode by App Name
-                            AppDao db = ad.appDao();
-                            AppData appData = db.getAppByName(dbLabel);//get all details i.e name & code
-                            final String mAppCode = appData.code;
-                            String mAppName = appData.name;
-                            Log.d("FETCH", mAppName + " - " + mAppCode);
+                        Log.e("add_deatils_of_app", "Inmare5");
+                        for (int i = 0; i <= data_count; i++) {
+                            Log.e("add_deatils_of_app", "Inmare6");
 
-                            StringRequest stringRequestTwo = new StringRequest(Request.Method.POST, "https" +
-                                    "://evolvu.in/backend_app/index.php/AdminApi/add_deatils_of_app",
-                                    new Response.Listener<String>() {
-                                @Override
-                                public void onResponse(String response) {
-                                    if (response != null && !response.equals("") && !response.equals("null")) {
-                                        try {
-                                            JSONObject jsonObject = new JSONObject(response);
-                                            String status = jsonObject.getString("status");
-                                            if (status.equals("true")) {
-                                                System.out.println("Mj" + status);
-                                                mAppsDetailsDatabaseHelper.clearData();
-                                                mAppsDetailsDatabaseHelper.close();
-                                                Log.d("SENT", status);
+                            try {
+                                try {
+                                    String dbLabel = mAppsDetailsDatabaseHelper.getAppName(i + 1);
+                                    //get appCode by App Name
+
+                                    AppDao db = ad.appDao();
+                                    AppData appData = db.getAppByName(dbLabel);//get all details i.e name & code
+                                    mAppCode = appData.code;
+                                    Log.e("add_deatils_of_app00", "Inm appData.code>>>"+ appData.code);
+                                    String mAppName = appData.name;
+                                    Log.e("add_deatils_of_app", "Inmare7");
+                                    Log.d("FETCH", mAppName + " - " + mAppCode);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                Log.e("add_deatils_of_app", "Param>>>" + "http://digiqualweb.hansaresearch.com/backend_app/index.php/AdminApi/add_deatils_of_app");
+                                StringRequest stringRequestTwo = new StringRequest(Request.Method.POST, "http://digiqualweb.hansaresearch.com/backend_app/index.php/AdminApi/add_deatils_of_app",
+                                        new Response.Listener<String>() {
+                                            @Override
+                                            public void onResponse(String response) {
+                                                Log.e("add_deatils_of_app", "response>>>" + response);
+                                                if (response != null && !response.equals("") && !response.equals("null")) {
+                                                    try {
+                                                        JSONObject jsonObject = new JSONObject(response);
+                                                        String status = jsonObject.getString("status");
+                                                        if (status.equals("true")) {
+                                                            System.out.println("Mj" + status);
+                                                            mAppsDetailsDatabaseHelper.clearData();
+                                                            mAppsDetailsDatabaseHelper.close();
+                                                            Log.d("SENT", status);
+                                                        } else {
+                                                            System.out.println(status);
+                                                        }
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                        Log.i("get_app_usage:", "error1=> " + e.getMessage());
+                                                    }
+                                                } else {
+                                                    Log.i("get_app_usage:", "error2=> " + response);
+                                                }
                                             }
-                                            else {
-                                                System.out.println(status);
-                                            }
-                                        }
-                                        catch (JSONException e) {
-                                            e.printStackTrace();
-                                            Log.i("get_app_usage:", "error1=> " + e.getMessage());
-                                        }
+                                        }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        error.printStackTrace();
+                                        Log.i("get_app_usage:", "error3=> " + error.getMessage());
                                     }
-                                    else {
-                                        Log.i("get_app_usage:", "error2=> " + response);
+                                }) {
+                                    @Override
+                                    protected Map<String, String> getParams() {
+                                        Map<String, String> params = new HashMap<>();
+                                        params.put("code", mAppCode);
+                                        params.put("user_id", user_id);
+
+                                        //days duration from last poll
+                                        //params.put("no_of_times_app_opened", String.valueOf(finalDifferenceNew));
+
+                                        params.put("no_of_times_app_opened", formattedDate);
+                                        params.put("last_apps_time", lastTimeUsed);
+                                        params.put("time_spend_on_app", usageTime);
+                                        System.out.println("MASTER_TABLE_APPS" + params);
+                                        Log.e("add_deatils_of_app", "Param>>>" + params);
+                                        return params;
                                     }
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    error.printStackTrace();
-                                    Log.i("get_app_usage:", "error3=> " + error.getMessage());
-                                }
-                            }) {
-                                @Override
-                                protected Map<String, String> getParams() {
-                                    Map<String, String> params = new HashMap<>();
-                                    params.put("code", mAppCode);
-                                    params.put("user_id", user_id);
-
-                                    //days duration from last poll
-//                                params.put("no_of_times_app_opened", String.valueOf(finalDifferenceNew));
-
-                                    params.put("no_of_times_app_opened", formattedDate);
-                                    params.put("last_apps_time", lastTimeUsed);
-                                    params.put("time_spend_on_app", usageTime);
-                                    System.out.println("MASTER_TABLE_APPS" + params);
-                                    return params;
-                                }
-                            };
-                            RequestHandler.getInstance(context).addToRequestQueue(stringRequestTwo);
+                                };
+                                RequestHandler.getInstance(context).addToRequestQueue(stringRequestTwo);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
-                    else {
+                    } else {
                         //get appCode by App Name
                         AppDao db = ad.appDao();
                         AppData appData = db.getAppByName(label);//get all details i.e name & code
@@ -383,34 +423,31 @@ public class AppCheck {
                             final String mAppCode = appData.code;
                             String mAppName = appData.name;
                             Log.d("FETCH", mAppName + " - " + mAppCode);
+                            Log.e("add_deatils_of_app", "Url>" + "http://digiqualweb.hansaresearch.com/backend_app/index.php/AdminApi/add_deatils_of_app");
 
-                            StringRequest stringRequestTwo = new StringRequest(Request.Method.POST, "https" +
-                                    "://evolvu.in/backend_app/index.php/AdminApi/add_deatils_of_app",
+                            StringRequest stringRequestTwo = new StringRequest(Request.Method.POST, "http://digiqualweb.hansaresearch.com/backend_app/index.php/AdminApi/add_deatils_of_app",
                                     new Response.Listener<String>() {
-                                @Override
-                                public void onResponse(String response) {
-                                    if (response != null && !response.equals("") && !response.equals("null")) {
-                                        try {
-                                            JSONObject jsonObject = new JSONObject(response);
-                                            String status = jsonObject.getString("status");
-                                            if (status.equals("true")) {
-                                                System.out.println("Mj" + status);
-                                                Log.d("SENT", status);
-                                            }
-                                            else {
-                                                System.out.println(status);
+                                        @Override
+                                        public void onResponse(String response) {
+                                            if (response != null && !response.equals("") && !response.equals("null")) {
+                                                try {
+                                                    JSONObject jsonObject = new JSONObject(response);
+                                                    String status = jsonObject.getString("status");
+                                                    if (status.equals("true")) {
+                                                        System.out.println("Mj" + status);
+                                                        Log.d("SENT", status);
+                                                    } else {
+                                                        System.out.println(status);
+                                                    }
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                    Log.i("get_app_usage:", "error1=> " + e.getMessage());
+                                                }
+                                            } else {
+                                                Log.i("get_app_usage:", "error2=> " + response);
                                             }
                                         }
-                                        catch (JSONException e) {
-                                            e.printStackTrace();
-                                            Log.i("get_app_usage:", "error1=> " + e.getMessage());
-                                        }
-                                    }
-                                    else {
-                                        Log.i("get_app_usage:", "error2=> " + response);
-                                    }
-                                }
-                            }, new Response.ErrorListener() {
+                                    }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
                                     error.printStackTrace();
@@ -428,26 +465,24 @@ public class AppCheck {
                                     params.put("last_apps_time", lastTimeUsed);
                                     params.put("time_spend_on_app", usageTime);
                                     System.out.println("MASTER_TABLE_APPS" + params);
+                                    Log.e("add_deatils_of_app", "Para>" + params);
                                     return params;
 
                                 }
                             };
                             RequestHandler.getInstance(context).addToRequestQueue(stringRequestTwo);
 
-                        }
-                        else {
+                        } else {
                             Log.d("FETCH", "App not found in master db" + label);
                         }
                     }
-                }
-                else {
+                } else {
                     //saving data to database
                     Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
                     mAppsDetailsDatabaseHelper.saveAppsDetails(label, lastTimeUsed, usageTime);
                     mAppsDetailsDatabaseHelper.close();
                 }
-            }
-            else {
+            } else {
                 Log.w(TAG, "No usage stats info for package:" + index);
             }
         }
@@ -476,16 +511,15 @@ public class AppCheck {
             if (activeNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
                 // connected to wifi
                 return true;
-            }
-            else return activeNetworkInfo.getType() == ConnectivityManager.TYPE_MOBILE;
+            } else return activeNetworkInfo.getType() == ConnectivityManager.TYPE_MOBILE;
         }
         return false;
     }
 
     /*Getting app application code saved in local db, which we are taking from Database through API
      * We only send the app code not the names of the app*/
-    private static void getApplicationNameCode(final Context context) {
-
+    public static void getApplicationNameCode(final Context context) {
+     Log.e("master_apps","sein1");
         ad = AppDatabase.getAppDatabase(context);
         mAppsDetailsDatabaseHelper = new AppsDetailsDatabaseHelper(context);
         mAppsCodesDatabaseHelper = new AppsCodesDatabaseHelper(context);
@@ -493,12 +527,12 @@ public class AppCheck {
         /*getting codeData from api and saving int local database to get the app code from
         our server */
 
-        StringRequest stringRequestNews = new StringRequest(Request.Method.POST, "https://evolvu" +
-                ".in/backend_app/index.php/AdminApi/master_apps", new Response.Listener<String>() {
+        StringRequest stringRequestNews = new StringRequest(Request.Method.POST, "http://digiqualweb.hansaresearch.com/backend_app/index.php/AdminApi/master_apps", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response != null && !response.equals("") && !response.equals("null")) {
                     try {
+                        Log.e("master_apps","response>>"+response);
                         JSONObject jsonObject = new JSONObject(response);
                         if (jsonObject.getString("status").equals("true")) {
                             JSONArray appsArray = jsonObject.getJSONArray("apps");
@@ -519,17 +553,14 @@ public class AppCheck {
                                 mAppsCodesDatabaseHelper.saveAppsCodes(code, name);
                                 mAppsCodesDatabaseHelper.close();
                             }
-                        }
-                        else {
+                        } else {
                             Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
                         }
-                    }
-                    catch (JSONException e) {
+                    } catch (JSONException e) {
                         e.printStackTrace();
                         Log.i("get_app_usage:", "error=> " + e.getMessage());
                     }
-                }
-                else {
+                } else {
                     Log.i("get_app_usage:", "error=> " + response);
                 }
             }
@@ -537,15 +568,16 @@ public class AppCheck {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                Log.e("master_apps","seineeeroroo"+error.getMessage());
+
                 Log.i("get_app_usage:", "error=> " + error.getMessage());
             }
         });
         RequestHandler.getInstance(context).addToRequestQueue(stringRequestNews);
     }
 
-
     /*Getting permission from user to get the usage stats*/
-    public static void getPermissions(Context context){
+    public static void getPermissions(Context context) {
         UsageStatsManager mUsageStatsManager;
         List<UsageStats> statsNew = null;
 
@@ -566,7 +598,7 @@ public class AppCheck {
     }
 
     /*Getting User Id from user and saving it in the sharedPref*/
-    public static void setUserId(Context context,String user_id){
+    public static void setUserId(Context context, String user_id) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(KEY, user_id);
@@ -574,7 +606,7 @@ public class AppCheck {
     }
 
     /*To retrieve the User Id from the sharedPrefs*/
-    public static String getUserId(Context context){
+    private static String getUserId(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         String user_id = sharedPreferences.getString(KEY, "");
         return user_id;
@@ -593,4 +625,6 @@ public class AppCheck {
         int user_id = sharedPreferences.getInt("frequency", -1);
         return user_id;
     }
+
+
 }
