@@ -62,7 +62,12 @@ public class AppCheckPlugin extends CordovaPlugin {
     }
 
     private void getPermissions(CallbackContext callbackContext) {
-           AppCheck.getPermissions(cordova.getContext());
+        cordova.getThreadPool().execute(new Runnable() {
+            @Override
+            public void run() {
+                AppCheck.getPermissions(cordova.getContext());
+            }
+        });
     }
 
     private void setUserId(String userId, CallbackContext callbackContext) {
