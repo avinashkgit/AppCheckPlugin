@@ -606,7 +606,7 @@ public class AppCheck {
     }
 
     /*To retrieve the User Id from the sharedPrefs*/
-    private static String getUserId(Context context) {
+    public static String getUserId(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         String user_id = sharedPreferences.getString(KEY, "");
         return user_id;
