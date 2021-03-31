@@ -80,6 +80,8 @@ public class AppCheck {
 
         final ArrayMap<String, String> mAppLabelMap = new ArrayMap<>();
 
+        ad = AppDatabase.getAppDatabase(context);
+
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_YEAR, -5); //-5 means 4 days before & current day(old => -5)
 

@@ -47,7 +47,12 @@ public class AppCheckPlugin extends CordovaPlugin {
 
     private void sendInstalledAppsToServer(String userId, CallbackContext callbackContext) {
         if (userId != null && userId.length() > 0) {
-           AppCheck.sendInstalledAppsToServer(userId, cordova.getContext());
+            cordova.getThreadPool().execute(new Runnable() {
+                @Override
+                public void run() {
+                    AppCheck.sendInstalledAppsToServer(userId, cordova.getContext());
+                }
+            });
         } else {
             callbackContext.error("Expected one non-empty string argument.");
         }
@@ -55,7 +60,12 @@ public class AppCheckPlugin extends CordovaPlugin {
 
     private void sendUserDataToServer(String userId, CallbackContext callbackContext) {
         if (userId != null && userId.length() > 0) {
-           AppCheck.sendUserDataToServer(userId, cordova.getContext());
+            cordova.getThreadPool().execute(new Runnable() {
+                @Override
+                public void run() {
+                    AppCheck.sendUserDataToServer(userId, cordova.getContext());
+                }
+            });
         } else {
             callbackContext.error("Expected one non-empty string argument.");
         }
@@ -72,7 +82,12 @@ public class AppCheckPlugin extends CordovaPlugin {
 
     private void setUserId(String userId, CallbackContext callbackContext) {
         if (userId != null && userId.length() > 0) {
-            AppCheck.setUserId(cordova.getContext(), userId);
+            cordova.getThreadPool().execute(new Runnable() {
+                @Override
+                public void run() {
+                    AppCheck.setUserId(cordova.getContext(), userId);
+                }
+            });
         } else {
             callbackContext.error("Expected one non-empty string argument.");
         }
@@ -80,7 +95,12 @@ public class AppCheckPlugin extends CordovaPlugin {
 
     private void setFrequency(String userId, CallbackContext callbackContext) {
         if (userId != null && userId.length() > 0) {
-            AppCheck.setFrequency(cordova.getContext(), userId);
+            cordova.getThreadPool().execute(new Runnable() {
+                @Override
+                public void run() {
+                    AppCheck.setFrequency(cordova.getContext(), userId);
+                }
+            });
         } else {
             callbackContext.error("Expected one non-empty string argument.");
         }
