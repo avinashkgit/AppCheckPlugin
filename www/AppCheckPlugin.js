@@ -94,5 +94,9 @@ module.exports = {
 
   getUsageAccessPermissions: function (success, error) {
     exec(success, error, 'AppCheckPlugin', 'getPermissions');
+  },
+
+  getInstalledAppFrequencyPost: function (success, error) {
+    exec(success, error, 'AppCheckPlugin', 'get_installed_app_frequency_post', [arg0]);
   }
 };

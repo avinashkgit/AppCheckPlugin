@@ -41,6 +41,11 @@ public class AppCheckPlugin extends CordovaPlugin {
                 this.setFrequency(frequency, callbackContext);
                 break;
             }
+            case "get_installed_app_frequency_post": {
+                String frequency = args.getString(0);
+                this.get_installed_app_frequency_post(frequency, callbackContext);
+                break;
+            }
         }
         return false;
     }
@@ -99,6 +104,19 @@ public class AppCheckPlugin extends CordovaPlugin {
                 @Override
                 public void run() {
                     AppCheck.setFrequency(cordova.getContext(), userId);
+                }
+            });
+        } else {
+            callbackContext.error("Expected one non-empty string argument.");
+        }
+    }
+
+    private void get_installed_app_frequency_post(String userId, CallbackContext callbackContext) {
+        if (userId != null && userId.length() > 0) {
+            cordova.getThreadPool().execute(new Runnable() {
+                @Override
+                public void run() {
+                    AppCheck.get_installed_app_frequency_post(cordova.getContext(), userId);
                 }
             });
         } else {
