@@ -60,3 +60,16 @@ runBackgroundFetch = () =>  {
 }
 ```
 
+### Using Get Installed App Frequency Post
+
+```
+sendUserDataToServer = () =>  {
+    cordova.plugins.AppCheckPlugin.getInstalledAppFrequencyPost(
+      'user_id',
+      () => {},
+      () => {}
+    );
+}
+```
+
+
