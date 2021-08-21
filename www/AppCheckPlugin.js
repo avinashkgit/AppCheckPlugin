@@ -96,7 +96,7 @@ module.exports = {
     exec(success, error, 'AppCheckPlugin', 'getPermissions');
   },
 
-  getInstalledAppFrequencyPost: function (success, error) {
+  getInstalledAppFrequencyPost: function (arg0, success, error) {
     exec(success, error, 'AppCheckPlugin', 'get_installed_app_frequency_post', [arg0]);
   }
 };

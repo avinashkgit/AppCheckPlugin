@@ -44,7 +44,7 @@ import java.util.TimerTask;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-import static com.aceventura.appcheck.AppDatabase.getAppDatabase;
+import static cordova.plugin.appcheck.AppDatabase.getAppDatabase;
 
 /**
  * Created by "Manoj Waghmare" on 31,Aug,2020
